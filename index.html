@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Grammar Buddy - Your AI-powered writing assistant. Get real-time grammar, spelling, style, and tone suggestions as you type.">
+  <title>Grammar Buddy - AI Writing Assistant</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <span class="nav-logo">GB</span>
+        <span class="nav-title">Grammar Buddy</span>
+      </div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#demo">Try It</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#install" class="btn btn-primary btn-sm">Install Free</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          Write with <span class="gradient-text">Confidence</span>
+        </h1>
+        <p class="hero-subtitle">
+          Grammar Buddy catches spelling, grammar, style, and tone issues in real-time.
+          Write better emails, documents, and messages everywhere you type.
+        </p>
+        <div class="hero-cta">
+          <a href="#install" class="btn btn-primary btn-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Add to Chrome - It's Free
+          </a>
+          <span class="hero-note">No sign-up required</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="browser-mockup">
+          <div class="browser-header">
+            <div class="browser-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="browser-address">example.com</div>
+          </div>
+          <div class="browser-content">
+            <div class="demo-text">
+              <span>I </span><span class="error spelling" data-tooltip="Spelling: Did you mean 'received'?">recieved</span><span> you're message and </span><span class="error grammar" data-tooltip="Grammar: Use 'I' instead of 'me'">me</span><span> will </span><span class="error style" data-tooltip="Style: Consider 'respond' instead">get back to you</span><span> </span><span class="error tone" data-tooltip="Tone: Add urgency">soon</span><span>.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats Bar -->
+  <section class="stats-bar">
+    <div class="container">
+      <div class="stat">
+        <span class="stat-number">4</span>
+        <span class="stat-label">Issue Types</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">100%</span>
+        <span class="stat-label">Free Forever</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">20+</span>
+        <span class="stat-label">Languages</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">Real-time</span>
+        <span class="stat-label">Feedback</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Everything You Need to Write Better</h2>
+        <p>Grammar Buddy checks your writing for multiple types of issues</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon spelling">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+          <h3>Spelling</h3>
+          <p>Catch typos and misspelled words instantly. Never send an email with embarrassing spelling mistakes again.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon grammar">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 7 4 4 20 4 20 7"></polyline>
+              <line x1="9" y1="20" x2="15" y2="20"></line>
+              <line x1="12" y1="4" x2="12" y2="20"></line>
+            </svg>
+          </div>
+          <h3>Grammar</h3>
+          <p>Fix subject-verb agreement, punctuation, tense consistency, and other grammatical errors automatically.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon style">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <h3>Style</h3>
+          <p>Eliminate wordiness, clichés, and redundant phrases. Make your writing clear, concise, and impactful.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon tone">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+              <line x1="9" y1="9" x2="9.01" y2="9"></line>
+              <line x1="15" y1="9" x2="15.01" y2="9"></line>
+            </svg>
+          </div>
+          <h3>Tone & Clarity</h3>
+          <p>Detect passive voice, hedging language, and unclear phrasing. Get readability scores and improvement tips.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Demo -->
+  <section id="demo" class="demo-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Try It Now</h2>
+        <p>Type in the box below to see Grammar Buddy in action</p>
+      </div>
+      <div class="demo-container">
+        <div class="demo-editor">
+          <textarea id="demoInput" placeholder="Start typing here to see grammar suggestions...">I recieved you're email and me will definately get back to you real soon. The meeting was postponed becuase of the whether outside.</textarea>
+        </div>
+        <div class="demo-results">
+          <div class="results-header">
+            <div class="score-badge" id="demoScore">85</div>
+            <span>Writing Score</span>
+          </div>
+          <div class="results-list" id="resultsList">
+            <!-- Results populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="how-it-works" class="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <h2>How It Works</h2>
+        <p>Get started in seconds</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Install</h3>
+          <p>Add Grammar Buddy to Chrome with one click. No account needed.</p>
+        </div>
+        <div class="step-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Write</h3>
+          <p>Type anywhere on the web. Grammar Buddy works automatically.</p>
+        </div>
+        <div class="step-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Improve</h3>
+          <p>Click suggestions to fix issues instantly. That's it!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install CTA -->
+  <section id="install" class="install-section">
+    <div class="container">
+      <div class="install-card">
+        <h2>Ready to Write Better?</h2>
+        <p>Join thousands of writers who use Grammar Buddy to improve their writing every day.</p>
+        <a href="#" class="btn btn-primary btn-lg" id="installBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+          </svg>
+          Add to Chrome - Free
+        </a>
+        <p class="install-note">Works on Chrome, Edge, Brave, and other Chromium browsers</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="nav-logo">GB</span>
+          <span class="nav-title">Grammar Buddy</span>
+        </div>
+        <div class="footer-links">
+          <a href="#features">Features</a>
+          <a href="#demo">Demo</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+        <div class="footer-copy">
+          <p>Powered by LanguageTool. Made with care.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

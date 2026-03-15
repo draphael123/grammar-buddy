@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Grammar Buddy extension and landing page\n\n- Chrome extension with Manifest V3\n- LanguageTool API integration for grammar checking\n- Content script for real-time text monitoring\n- Popup UI with writing score and stats\n- Options page for settings and preferences\n- Landing page with interactive demo\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix Vercel deployment: add landing page to root\n\n- Copy landing page files to root for Vercel\n- Add vercel.json configuration\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
