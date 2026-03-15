@@ -1,6 +1,163 @@
 // Grammar Buddy Landing Page Script
 
 document.addEventListener('DOMContentLoaded', () => {
+  // ===== DARK MODE TOGGLE =====
+  const themeToggle = document.getElementById('themeToggle');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+  // Check for saved theme or system preference
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  } else if (prefersDark.matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  }
+
+  // ===== TYPING ANIMATION IN HERO =====
+  const typingDemo = document.getElementById('typingDemo');
+  if (typingDemo) {
+    const typingText = typingDemo.querySelector('.typing-text');
+    const phrases = [
+      { text: 'I recieved you\'re email...', hasError: true },
+      { text: 'I received your email...', hasError: false },
+      { text: 'Me and my team will...', hasError: true },
+      { text: 'My team and I will...', hasError: false },
+      { text: 'I definately agree...', hasError: true },
+      { text: 'I definitely agree...', hasError: false }
+    ];
+
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let isPaused = false;
+
+    function typeAnimation() {
+      const currentPhrase = phrases[phraseIndex];
+
+      if (isPaused) {
+        setTimeout(typeAnimation, 1500);
+        isPaused = false;
+        isDeleting = true;
+        return;
+      }
+
+      if (isDeleting) {
+        typingText.textContent = currentPhrase.text.substring(0, charIndex - 1);
+        charIndex--;
+
+        if (charIndex === 0) {
+          isDeleting = false;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+        }
+        setTimeout(typeAnimation, 30);
+      } else {
+        typingText.textContent = currentPhrase.text.substring(0, charIndex + 1);
+        charIndex++;
+
+        // Add error styling
+        if (currentPhrase.hasError) {
+          typingText.classList.add('has-error');
+        } else {
+          typingText.classList.remove('has-error');
+        }
+
+        if (charIndex === currentPhrase.text.length) {
+          isPaused = true;
+        }
+        setTimeout(typeAnimation, 80);
+      }
+    }
+
+    // Start typing animation after a short delay
+    setTimeout(typeAnimation, 1000);
+  }
+
+  // ===== ANIMATED STATS COUNTER =====
+  const statNumbers = document.querySelectorAll('.stat-number[data-target]');
+  let statsAnimated = false;
+
+  function animateStats() {
+    if (statsAnimated) return;
+
+    statNumbers.forEach(stat => {
+      const target = parseInt(stat.dataset.target);
+      const duration = 2000;
+      const increment = target / (duration / 16);
+      let current = 0;
+
+      const updateCounter = () => {
+        current += increment;
+        if (current < target) {
+          stat.textContent = Math.floor(current).toLocaleString();
+          requestAnimationFrame(updateCounter);
+        } else {
+          stat.textContent = target.toLocaleString();
+          // Add + suffix for certain stats
+          if (target > 1000) {
+            stat.textContent = target.toLocaleString() + '+';
+          }
+        }
+      };
+
+      updateCounter();
+    });
+
+    statsAnimated = true;
+  }
+
+  // Trigger stats animation when stats bar is visible
+  const statsBar = document.querySelector('.stats-bar');
+  if (statsBar) {
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateStats();
+          statsObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.5 });
+
+    statsObserver.observe(statsBar);
+  }
+
+  // ===== EMAIL SIGNUP FORM =====
+  const signupForm = document.getElementById('signupForm');
+  if (signupForm) {
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = signupForm.querySelector('input[type="email"]').value;
+      const button = signupForm.querySelector('button');
+      const originalText = button.textContent;
+
+      // Simulate form submission
+      button.textContent = 'Subscribing...';
+      button.disabled = true;
+
+      setTimeout(() => {
+        button.textContent = 'Subscribed!';
+        button.style.background = 'linear-gradient(135deg, #27ae60, #1e8449)';
+        signupForm.querySelector('input').value = '';
+
+        // Reset after a few seconds
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.style.background = '';
+          button.disabled = false;
+        }, 3000);
+      }, 1000);
+    });
+  }
+
+  // ===== INTERACTIVE DEMO =====
   const demoInput = document.getElementById('demoInput');
   const resultsList = document.getElementById('resultsList');
   const demoScore = document.getElementById('demoScore');
@@ -307,13 +464,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Event listeners
-  demoInput.addEventListener('input', debounce(() => updateDemo(), 400));
+  // Event listeners for demo
+  if (demoInput) {
+    demoInput.addEventListener('input', debounce(() => updateDemo(), 400));
+    // Initial highlight
+    updateDemo();
+  }
 
-  // Initial highlight
-  updateDemo();
-
-  // Smooth scroll
+  // ===== SMOOTH SCROLL =====
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
       e.preventDefault();
@@ -324,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Download button - direct download from GitHub
+  // ===== DOWNLOAD BUTTON =====
   const installBtn = document.getElementById('installBtn');
   if (installBtn) {
     installBtn.addEventListener('click', (e) => {
@@ -333,15 +491,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Navbar scroll effect
+  // ===== NAVBAR SCROLL EFFECT =====
   const navbar = document.querySelector('.navbar');
   window.addEventListener('scroll', () => {
-    navbar.style.boxShadow = window.pageYOffset > 100
-      ? '0 2px 20px rgba(0, 0, 0, 0.1)'
-      : 'none';
+    if (navbar) {
+      navbar.style.boxShadow = window.pageYOffset > 100
+        ? '0 2px 20px rgba(0, 0, 0, 0.1)'
+        : 'none';
+    }
   });
 
-  // Scroll animations
+  // ===== SCROLL ANIMATIONS =====
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -351,14 +511,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-  document.querySelectorAll('.feature-card, .step, .faq-item').forEach(el => {
+  document.querySelectorAll('.feature-card, .step, .faq-item, .use-case-card, .ba-card').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
     observer.observe(el);
   });
 
-  // FAQ accordion
+  // ===== FAQ ACCORDION =====
   document.querySelectorAll('.faq-question').forEach(question => {
     question.addEventListener('click', () => {
       const item = question.parentElement;

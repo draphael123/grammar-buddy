@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Grammar Buddy - Your AI-powered writing assistant. Get real-time grammar, spelling, style, and tone suggestions as you type.">
-  <title>Grammar Buddy - AI Writing Assistant</title>
+  <meta name="description" content="Grammar Buddy - Your AI-powered writing assistant. Get real-time grammar, spelling, style, and tone suggestions as you type. 100% free, no account required.">
+  <title>Grammar Buddy - Free AI Writing Assistant | Grammar & Spell Checker</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 </head>
@@ -19,7 +19,24 @@
       <div class="nav-links">
         <a href="#features">Features</a>
         <a href="#demo">Try It</a>
+        <a href="#compare">Compare</a>
         <a href="#faq">FAQ</a>
+        <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">
+          <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
         <a href="#install" class="btn btn-primary btn-sm">Download Free</a>
       </div>
     </div>
@@ -29,6 +46,16 @@
   <header class="hero">
     <div class="container">
       <div class="hero-content">
+        <div class="hero-badges">
+          <span class="badge badge-free">100% Free</span>
+          <span class="badge badge-privacy">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Privacy First
+          </span>
+        </div>
         <h1 class="hero-title">
           Write with <span class="gradient-text">Confidence</span>
         </h1>
@@ -47,6 +74,20 @@
           </a>
           <span class="hero-note">No sign-up required</span>
         </div>
+        <div class="browser-badges">
+          <span class="browser-badge" title="Google Chrome">
+            <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#4285F4"/><circle cx="12" cy="12" r="4" fill="white"/><path d="M12 6 L21.5 12 L12 12 Z" fill="#34A853"/><path d="M12 12 L21.5 12 L16.5 20 Z" fill="#FBBC05"/><path d="M12 12 L16.5 20 L7.5 20 Z" fill="#EA4335"/></svg>
+            Chrome
+          </span>
+          <span class="browser-badge" title="Microsoft Edge">
+            <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#0078D4"/><path d="M6 12 Q12 4 18 12 Q12 20 6 12" fill="white"/></svg>
+            Edge
+          </span>
+          <span class="browser-badge" title="Brave Browser">
+            <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FB542B"/><path d="M12 6 L16 10 L14 18 L12 16 L10 18 L8 10 Z" fill="white"/></svg>
+            Brave
+          </span>
+        </div>
       </div>
       <div class="hero-visual">
         <div class="browser-mockup">
@@ -54,11 +95,12 @@
             <div class="browser-dots">
               <span></span><span></span><span></span>
             </div>
-            <div class="browser-address">example.com</div>
+            <div class="browser-address">gmail.com</div>
           </div>
           <div class="browser-content">
-            <div class="demo-text">
-              <span>I </span><span class="error spelling" data-tooltip="Spelling: Did you mean 'received'?">recieved</span><span> you're message and </span><span class="error grammar" data-tooltip="Grammar: Use 'I' instead of 'me'">me</span><span> will </span><span class="error style" data-tooltip="Style: Consider 'respond' instead">get back to you</span><span> </span><span class="error tone" data-tooltip="Tone: Add urgency">soon</span><span>.</span>
+            <div class="typing-demo" id="typingDemo">
+              <span class="typing-text"></span>
+              <span class="typing-cursor">|</span>
             </div>
           </div>
         </div>
@@ -66,24 +108,57 @@
     </div>
   </header>
 
-  <!-- Stats Bar -->
+  <!-- Stats Bar with Animation -->
   <section class="stats-bar">
     <div class="container">
       <div class="stat">
-        <span class="stat-number">4</span>
-        <span class="stat-label">Issue Types</span>
+        <span class="stat-number" data-target="50000">0</span>
+        <span class="stat-label">Errors Caught</span>
       </div>
       <div class="stat">
         <span class="stat-number">100%</span>
         <span class="stat-label">Free Forever</span>
       </div>
       <div class="stat">
-        <span class="stat-number">20+</span>
+        <span class="stat-number" data-target="25">0</span>
         <span class="stat-label">Languages</span>
       </div>
       <div class="stat">
-        <span class="stat-number">Real-time</span>
-        <span class="stat-label">Feedback</span>
+        <span class="stat-number">&lt;1s</span>
+        <span class="stat-label">Response Time</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trusted Platforms -->
+  <section class="trusted-section">
+    <div class="container">
+      <p class="trusted-label">Works everywhere you write</p>
+      <div class="trusted-logos">
+        <div class="trusted-logo" title="Gmail">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#EA4335"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          <span>Gmail</span>
+        </div>
+        <div class="trusted-logo" title="Google Docs">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#4285F4"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
+          <span>Docs</span>
+        </div>
+        <div class="trusted-logo" title="Slack">
+          <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#E01E5A" d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52z"/><path fill="#36C5F0" d="M15.165 5.042a2.528 2.528 0 0 1 2.523-2.52A2.528 2.528 0 0 1 20.21 5.044a2.527 2.527 0 0 1-2.52 2.522h-2.52V5.042z"/><path fill="#2EB67D" d="M8.958 20.21a2.528 2.528 0 0 1-2.52-2.522 2.528 2.528 0 0 1 2.52-2.52h5.04v5.04a2.527 2.527 0 0 1-2.52 2.522 2.528 2.528 0 0 1-2.52-2.52z"/><path fill="#ECB22E" d="M20.21 8.958a2.528 2.528 0 0 1-2.522 2.52h-5.04V6.438a2.527 2.527 0 0 1 2.52-2.522 2.528 2.528 0 0 1 2.52 2.52v2.522z"/></svg>
+          <span>Slack</span>
+        </div>
+        <div class="trusted-logo" title="LinkedIn">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          <span>LinkedIn</span>
+        </div>
+        <div class="trusted-logo" title="Twitter/X">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#000"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <span>Twitter</span>
+        </div>
+        <div class="trusted-logo" title="Notion">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#000"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.98-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.886l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952l1.448.327s0 .84-1.168.84l-3.22.186c-.094-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.453-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.886.747-.933zM2.638 1.502l13.589-.933c1.682-.14 2.102.093 2.802.607l3.87 2.706c.467.327.608.747.608 1.26v15.037c0 .98-.327 1.493-1.402 1.586l-15.457.934c-.98.047-1.448-.093-1.96-.747l-3.127-4.039c-.56-.747-.793-1.307-.793-1.96V2.951c0-.84.327-1.4 1.87-1.45z"/></svg>
+          <span>Notion</span>
+        </div>
       </div>
     </div>
   </section>
@@ -143,6 +218,123 @@
     </div>
   </section>
 
+  <!-- Before/After Section -->
+  <section class="before-after-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>See the Difference</h2>
+        <p>Watch how Grammar Buddy transforms your writing</p>
+      </div>
+      <div class="before-after-grid">
+        <div class="ba-card">
+          <div class="ba-header">
+            <span class="ba-label ba-before">Before</span>
+            <span class="ba-category">Email</span>
+          </div>
+          <div class="ba-content ba-before-content">
+            <p>Hi, I wanted to <span class="ba-error">followup</span> on <span class="ba-error">are</span> meeting from last week. <span class="ba-error">Me and my team</span> <span class="ba-error">was</span> wondering if you <span class="ba-error">recieved</span> the proposal we <span class="ba-error">sended</span>.</p>
+          </div>
+        </div>
+        <div class="ba-arrow">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+        <div class="ba-card">
+          <div class="ba-header">
+            <span class="ba-label ba-after">After</span>
+            <span class="ba-category">Email</span>
+          </div>
+          <div class="ba-content ba-after-content">
+            <p>Hi, I wanted to <span class="ba-fix">follow up</span> on <span class="ba-fix">our</span> meeting from last week. <span class="ba-fix">My team and I</span> <span class="ba-fix">were</span> wondering if you <span class="ba-fix">received</span> the proposal we <span class="ba-fix">sent</span>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="before-after-grid">
+        <div class="ba-card">
+          <div class="ba-header">
+            <span class="ba-label ba-before">Before</span>
+            <span class="ba-category">Social Post</span>
+          </div>
+          <div class="ba-content ba-before-content">
+            <p>Just finished reading this <span class="ba-error">absolutly</span> <span class="ba-error">amazing</span> book! <span class="ba-error">Its</span> <span class="ba-error">definately</span> one of the best <span class="ba-error">I ever red</span>. Highly recommend!</p>
+          </div>
+        </div>
+        <div class="ba-arrow">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+        <div class="ba-card">
+          <div class="ba-header">
+            <span class="ba-label ba-after">After</span>
+            <span class="ba-category">Social Post</span>
+          </div>
+          <div class="ba-content ba-after-content">
+            <p>Just finished reading this <span class="ba-fix">absolutely</span> <span class="ba-fix">incredible</span> book! <span class="ba-fix">It's</span> <span class="ba-fix">definitely</span> one of the best <span class="ba-fix">I've ever read</span>. Highly recommend!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases Section -->
+  <section class="use-cases-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Perfect For Everyone</h2>
+        <p>Grammar Buddy helps all types of writers</p>
+      </div>
+      <div class="use-cases-grid">
+        <div class="use-case-card">
+          <div class="use-case-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
+          </div>
+          <h3>Students</h3>
+          <p>Write better essays, research papers, and assignments. Improve your grades with error-free writing.</p>
+        </div>
+        <div class="use-case-card">
+          <div class="use-case-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+          </div>
+          <h3>Professionals</h3>
+          <p>Send polished emails, reports, and presentations. Make a great impression every time.</p>
+        </div>
+        <div class="use-case-card">
+          <div class="use-case-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+              <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+              <path d="M2 2l7.586 7.586"></path>
+              <circle cx="11" cy="11" r="2"></circle>
+            </svg>
+          </div>
+          <h3>Writers & Bloggers</h3>
+          <p>Create engaging content that's free of errors. Focus on your ideas, not typos.</p>
+        </div>
+        <div class="use-case-card">
+          <div class="use-case-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <h3>Non-Native Speakers</h3>
+          <p>Write confidently in English. Get suggestions that help you sound natural and fluent.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Interactive Demo -->
   <section id="demo" class="demo-section">
     <div class="container">
@@ -163,6 +355,81 @@
             <!-- Results populated by JS -->
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Section -->
+  <section id="compare" class="comparison-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>How We Compare</h2>
+        <p>See why Grammar Buddy is the smart choice</p>
+      </div>
+      <div class="comparison-table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="highlight-col">
+                <span class="table-logo">GB</span>
+                Grammar Buddy
+              </th>
+              <th>Grammarly Free</th>
+              <th>Grammarly Premium</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Price</td>
+              <td class="highlight-col"><span class="price-free">Free Forever</span></td>
+              <td>Free</td>
+              <td>$12/month</td>
+            </tr>
+            <tr>
+              <td>Spelling & Grammar</td>
+              <td class="highlight-col"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Style Suggestions</td>
+              <td class="highlight-col"><span class="check">✓</span></td>
+              <td><span class="cross">Limited</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Tone Detection</td>
+              <td class="highlight-col"><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Readability Score</td>
+              <td class="highlight-col"><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Account Required</td>
+              <td class="highlight-col"><span class="check-green">No</span></td>
+              <td><span class="cross">Yes</span></td>
+              <td><span class="cross">Yes</span></td>
+            </tr>
+            <tr>
+              <td>Data Privacy</td>
+              <td class="highlight-col"><span class="check-green">No storage</span></td>
+              <td><span class="cross">Stored</span></td>
+              <td><span class="cross">Stored</span></td>
+            </tr>
+            <tr>
+              <td>Languages</td>
+              <td class="highlight-col">25+</td>
+              <td>1</td>
+              <td>1</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
@@ -270,7 +537,7 @@
             </svg>
           </div>
           <div class="faq-answer">
-            <p>Grammar Buddy supports over 20 languages including English (US, UK, AU), German, French, Spanish, Portuguese, Dutch, Polish, Russian, and more. You can change the language in the extension settings.</p>
+            <p>Grammar Buddy supports over 25 languages including English (US, UK, AU), German, French, Spanish, Portuguese, Dutch, Polish, Russian, and more. You can change the language in the extension settings.</p>
           </div>
         </div>
         <div class="faq-item">
@@ -281,7 +548,7 @@
             </svg>
           </div>
           <div class="faq-answer">
-            <p>Your privacy is important to us. Grammar Buddy only sends text to LanguageTool's servers for grammar checking - no text is stored or logged. The extension doesn't collect any personal information or track your browsing activity.</p>
+            <p>Your privacy is our priority. Grammar Buddy only sends text to LanguageTool's servers for grammar checking - no text is stored or logged. The extension doesn't collect any personal information or track your browsing activity.</p>
           </div>
         </div>
         <div class="faq-item">
@@ -295,6 +562,21 @@
             <p>Grammar Buddy requires an internet connection to check your text using the LanguageTool API. However, your ignored words and settings are stored locally and will persist offline.</p>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Email Signup -->
+  <section class="signup-section">
+    <div class="container">
+      <div class="signup-card">
+        <h2>Get Notified When We Launch</h2>
+        <p>Be the first to know when Grammar Buddy is available on the Chrome Web Store</p>
+        <form class="signup-form" id="signupForm">
+          <input type="email" placeholder="Enter your email" required>
+          <button type="submit" class="btn btn-primary">Notify Me</button>
+        </form>
+        <p class="signup-note">No spam, ever. Unsubscribe anytime.</p>
       </div>
     </div>
   </section>
@@ -329,8 +611,8 @@
         <div class="footer-links">
           <a href="#features">Features</a>
           <a href="#demo">Demo</a>
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
+          <a href="#compare">Compare</a>
+          <a href="#faq">FAQ</a>
         </div>
         <div class="footer-copy">
           <p>Powered by LanguageTool. Made with care.</p>
