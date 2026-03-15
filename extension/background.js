@@ -15,7 +15,7 @@ chrome.runtime.onInstalled.addListener(() => {
     checkStyle: true,
     checkTone: true,
     ignoredWords: [],
-    theme: 'light'
+    theme: 'auto' // 'light', 'dark', or 'auto'
   });
 
   // Create context menu
@@ -24,6 +24,33 @@ chrome.runtime.onInstalled.addListener(() => {
     title: 'Check with Grammar Buddy',
     contexts: ['selection']
   });
+});
+
+// Handle keyboard shortcuts
+chrome.commands.onCommand.addListener(async (command) => {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id) return;
+
+  if (command === 'check-grammar') {
+    chrome.tabs.sendMessage(tab.id, { type: 'KEYBOARD_CHECK' });
+  }
+
+  if (command === 'toggle-extension') {
+    const settings = await chrome.storage.sync.get(['enabled']);
+    const newEnabled = !settings.enabled;
+    await chrome.storage.sync.set({ enabled: newEnabled });
+    chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_ENABLED', enabled: newEnabled });
+
+    // Update badge to show status
+    chrome.action.setBadgeText({
+      text: newEnabled ? '' : 'OFF',
+      tabId: tab.id
+    });
+    chrome.action.setBadgeBackgroundColor({
+      color: newEnabled ? '#27ae60' : '#999',
+      tabId: tab.id
+    });
+  }
 });
 
 // Handle context menu clicks

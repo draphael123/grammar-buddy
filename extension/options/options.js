@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load current settings
   const settings = await chrome.storage.sync.get({
     language: 'en-US',
-    theme: 'light',
+    theme: 'auto',
     checkSpelling: true,
     checkGrammar: true,
     checkStyle: true,
@@ -32,12 +32,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   checkStyle.checked = settings.checkStyle;
   checkTone.checked = settings.checkTone;
 
+  // Apply theme to options page
+  applyTheme(settings.theme);
+
   // Render ignored words
   renderIgnoredWords(settings.ignoredWords);
 
   // Event listeners for settings changes
   languageSelect.addEventListener('change', () => saveSettings());
-  themeSelect.addEventListener('change', () => saveSettings());
+  themeSelect.addEventListener('change', () => {
+    applyTheme(themeSelect.value);
+    saveSettings();
+  });
   checkSpelling.addEventListener('change', () => saveSettings());
   checkGrammar.addEventListener('change', () => saveSettings());
   checkStyle.addEventListener('change', () => saveSettings());
@@ -50,6 +56,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       addWord();
     }
   });
+
+  function applyTheme(theme) {
+    if (theme === 'auto') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+  }
 
   async function saveSettings() {
     const newSettings = {
@@ -150,5 +165,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     e.preventDefault();
     // Would link to feedback form
     alert('This will link to a feedback form.');
+  });
+
+  // Listen for system theme changes when using auto
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (themeSelect.value === 'auto') {
+      applyTheme('auto');
+    }
   });
 });

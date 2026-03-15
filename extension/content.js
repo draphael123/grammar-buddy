@@ -17,7 +17,41 @@
   let activeTooltip = null;
   let checkTimeout = null;
   let currentMatches = new Map(); // element -> matches
+  let currentStats = new Map(); // element -> stats
   let isChecking = false;
+  let lastFocusedElement = null;
+
+  // Offline fallback patterns for when API is unavailable
+  const offlinePatterns = [
+    { pattern: /\brecieved\b/gi, category: 'spelling', message: 'Did you mean "received"?', replacement: 'received' },
+    { pattern: /\bdefinately\b/gi, category: 'spelling', message: 'Did you mean "definitely"?', replacement: 'definitely' },
+    { pattern: /\boccured\b/gi, category: 'spelling', message: 'Did you mean "occurred"?', replacement: 'occurred' },
+    { pattern: /\bseperate\b/gi, category: 'spelling', message: 'Did you mean "separate"?', replacement: 'separate' },
+    { pattern: /\buntill\b/gi, category: 'spelling', message: 'Did you mean "until"?', replacement: 'until' },
+    { pattern: /\bwich\b/gi, category: 'spelling', message: 'Did you mean "which"?', replacement: 'which' },
+    { pattern: /\bbecuase\b/gi, category: 'spelling', message: 'Did you mean "because"?', replacement: 'because' },
+    { pattern: /\bthier\b/gi, category: 'spelling', message: 'Did you mean "their"?', replacement: 'their' },
+    { pattern: /\balot\b/gi, category: 'spelling', message: '"A lot" should be two words', replacement: 'a lot' },
+    { pattern: /\bwether\b/gi, category: 'spelling', message: 'Did you mean "weather" or "whether"?', replacement: 'whether' },
+    { pattern: /\bteh\b/gi, category: 'spelling', message: 'Did you mean "the"?', replacement: 'the' },
+    { pattern: /\byou're\s+(email|message|letter|document|file|report|computer|phone|car|house|book)/gi, category: 'grammar', message: 'Use "your" (possessive) instead of "you\'re"', replacement: 'your $1' },
+    { pattern: /\bits\s+(a|an|the|very|really|so|too)/gi, category: 'grammar', message: 'Did you mean "it\'s" (it is)?', replacement: "it's $1" },
+    { pattern: /\bme\s+and\s+(my|him|her|them)\b/gi, category: 'grammar', message: 'Consider using "X and I" as the subject', replacement: '$1 and I' },
+    { pattern: /\bcould\s+of\b/gi, category: 'grammar', message: 'Did you mean "could have"?', replacement: 'could have' },
+    { pattern: /\bshould\s+of\b/gi, category: 'grammar', message: 'Did you mean "should have"?', replacement: 'should have' },
+    { pattern: /\bwould\s+of\b/gi, category: 'grammar', message: 'Did you mean "would have"?', replacement: 'would have' },
+    { pattern: /\btheir\s+is\b/gi, category: 'grammar', message: 'Did you mean "there is"?', replacement: 'there is' },
+    { pattern: /\btheir\s+are\b/gi, category: 'grammar', message: 'Did you mean "there are"?', replacement: 'there are' },
+    { pattern: /\bvery\s+unique\b/gi, category: 'style', message: '"Unique" doesn\'t need "very"', replacement: 'unique' },
+    { pattern: /\bin\s+order\s+to\b/gi, category: 'style', message: 'Consider simplifying to "to"', replacement: 'to' },
+    { pattern: /\bat\s+this\s+point\s+in\s+time\b/gi, category: 'style', message: 'Consider simplifying to "now"', replacement: 'now' },
+    { pattern: /\bdue\s+to\s+the\s+fact\s+that\b/gi, category: 'style', message: 'Consider simplifying to "because"', replacement: 'because' },
+    { pattern: /\bin\s+the\s+event\s+that\b/gi, category: 'style', message: 'Consider simplifying to "if"', replacement: 'if' },
+    { pattern: /\breal\s+soon\b/gi, category: 'style', message: 'Use "very" instead of "real" in formal writing', replacement: 'very soon' },
+    { pattern: /\bi\s+think\s+that\b/gi, category: 'tone', message: 'Consider being more direct', replacement: '' },
+    { pattern: /\bjust\s+wanted\s+to\b/gi, category: 'tone', message: 'Consider being more direct', replacement: 'wanted to' },
+    { pattern: /\bbasically\b/gi, category: 'tone', message: 'Consider removing filler word', replacement: '' }
+  ];
 
   // Initialize
   init();
@@ -39,28 +73,98 @@
     setupInputListeners();
     observeDOM();
 
-    // Listen for messages from background
+    // Listen for messages from background/popup
     chrome.runtime.onMessage.addListener(handleMessage);
   }
 
   function handleMessage(message, sender, sendResponse) {
     if (message.type === 'SHOW_RESULTS') {
-      // Handle context menu results
       console.log('Grammar Buddy results:', message.results);
     }
+
     if (message.type === 'SETTINGS_UPDATED') {
       settings = { ...settings, ...message.settings };
     }
+
     if (message.type === 'TOGGLE_ENABLED') {
       settings.enabled = message.enabled;
       if (!settings.enabled) {
         cleanup();
       }
     }
+
+    // Handle GET_STATS request from popup
+    if (message.type === 'GET_STATS') {
+      const stats = getAggregatedStats();
+      sendResponse({ stats: stats });
+      return true;
+    }
+
+    // Handle CHECK_NOW request from popup
+    if (message.type === 'CHECK_NOW') {
+      checkAllInputs().then(stats => {
+        sendResponse({ stats: stats });
+      });
+      return true;
+    }
+
+    // Handle keyboard shortcut from background
+    if (message.type === 'KEYBOARD_CHECK') {
+      checkAllInputs();
+    }
+  }
+
+  // Get aggregated stats from all monitored elements
+  function getAggregatedStats() {
+    let totalStats = {
+      wordCount: 0,
+      readingTime: 0,
+      gradeLevel: '--',
+      readingEase: '--',
+      score: 100,
+      issueCounts: { spelling: 0, grammar: 0, style: 0, tone: 0 }
+    };
+
+    // If we have a focused element with stats, use those
+    if (lastFocusedElement && currentStats.has(lastFocusedElement)) {
+      return currentStats.get(lastFocusedElement);
+    }
+
+    // Otherwise aggregate from all elements
+    let totalIssues = 0;
+    currentStats.forEach((stats) => {
+      totalStats.wordCount += stats.wordCount || 0;
+      totalStats.issueCounts.spelling += stats.issueCounts?.spelling || 0;
+      totalStats.issueCounts.grammar += stats.issueCounts?.grammar || 0;
+      totalStats.issueCounts.style += stats.issueCounts?.style || 0;
+      totalStats.issueCounts.tone += stats.issueCounts?.tone || 0;
+      totalIssues += stats.totalIssues || 0;
+    });
+
+    if (totalStats.wordCount > 0) {
+      totalStats.readingTime = Math.ceil(totalStats.wordCount / 200);
+      const penalty = Math.min(totalIssues * 5, 50);
+      totalStats.score = Math.max(100 - penalty, 50);
+    }
+
+    return totalStats;
+  }
+
+  // Check all text inputs on the page
+  async function checkAllInputs() {
+    const inputs = document.querySelectorAll('textarea, [contenteditable="true"], input[type="text"], input:not([type])');
+
+    for (const element of inputs) {
+      const text = getTextContent(element);
+      if (text.length >= 10) {
+        await checkText(element, text);
+      }
+    }
+
+    return getAggregatedStats();
   }
 
   function setupInputListeners() {
-    // Add listeners to existing inputs
     document.querySelectorAll('textarea, [contenteditable="true"], input[type="text"], input:not([type])').forEach(el => {
       attachListeners(el);
     });
@@ -123,6 +227,7 @@
 
   function handleFocus(event) {
     const element = event.target;
+    lastFocusedElement = element;
     const text = getTextContent(element);
     if (text.length >= 10 && !currentMatches.has(element)) {
       checkText(element, text);
@@ -130,7 +235,6 @@
   }
 
   function handleBlur(event) {
-    // Keep highlights but hide tooltip
     hideTooltip();
   }
 
@@ -147,14 +251,70 @@
 
       if (response.success) {
         currentMatches.set(element, response.results);
+        currentStats.set(element, response.results.stats);
         highlightErrors(element, response.results.matches);
         updateBadge(response.results.stats.totalIssues);
       }
     } catch (error) {
-      console.error('Grammar Buddy check error:', error);
+      // API failed - use offline fallback
+      console.log('Grammar Buddy: Using offline mode');
+      const offlineResults = checkTextOffline(text);
+      currentMatches.set(element, offlineResults);
+      currentStats.set(element, offlineResults.stats);
+      highlightErrors(element, offlineResults.matches);
+      updateBadge(offlineResults.stats.totalIssues);
     } finally {
       isChecking = false;
     }
+  }
+
+  // Offline grammar checking using local patterns
+  function checkTextOffline(text) {
+    const matches = [];
+
+    offlinePatterns.forEach(pattern => {
+      let match;
+      const regex = new RegExp(pattern.pattern.source, pattern.pattern.flags);
+
+      while ((match = regex.exec(text)) !== null) {
+        let replacement = pattern.replacement;
+        if (replacement.includes('$1')) {
+          replacement = match[0].replace(pattern.pattern, pattern.replacement);
+        }
+
+        matches.push({
+          offset: match.index,
+          length: match[0].length,
+          message: pattern.message,
+          category: pattern.category,
+          replacements: replacement ? [{ value: replacement }] : [],
+          rule: { id: 'OFFLINE_' + pattern.category.toUpperCase() }
+        });
+      }
+    });
+
+    // Calculate stats
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+    const issueCounts = { spelling: 0, grammar: 0, style: 0, tone: 0 };
+    matches.forEach(m => {
+      issueCounts[m.category] = (issueCounts[m.category] || 0) + 1;
+    });
+
+    const penalty = Math.min(matches.length * 5, 50);
+    const score = Math.max(100 - penalty, 50);
+
+    return {
+      matches: matches,
+      stats: {
+        wordCount: words.length,
+        readingTime: Math.ceil(words.length / 200),
+        gradeLevel: '--',
+        readingEase: '--',
+        score: score,
+        issueCounts: issueCounts,
+        totalIssues: matches.length
+      }
+    };
   }
 
   function getTextContent(element) {
@@ -165,21 +325,15 @@
   }
 
   function highlightErrors(element, matches) {
-    // For contenteditable elements, we can add spans
     if (element.getAttribute('contenteditable') === 'true') {
       highlightContentEditable(element, matches);
     } else {
-      // For textareas/inputs, use overlay or indicator
       showIndicator(element, matches);
     }
   }
 
   function highlightContentEditable(element, matches) {
-    // Store original content
-    const originalHTML = element.innerHTML;
     const text = element.innerText || element.textContent;
-
-    // Sort matches by offset (descending) to replace from end to start
     const sortedMatches = [...matches].sort((a, b) => b.offset - a.offset);
 
     let highlightedText = text;
@@ -194,15 +348,12 @@
       highlightedText = highlightedText.substring(0, start) + span + highlightedText.substring(end);
     });
 
-    // Only update if different
     if (element.innerHTML !== highlightedText) {
-      // Save cursor position
       const selection = window.getSelection();
       const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
 
       element.innerHTML = highlightedText;
 
-      // Add click handlers to highlighted errors
       element.querySelectorAll('.grammar-buddy-error').forEach(span => {
         span.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -214,13 +365,11 @@
   }
 
   function showIndicator(element, matches) {
-    // Remove existing indicator
     const existingIndicator = element.parentElement?.querySelector('.grammar-buddy-indicator');
     if (existingIndicator) {
       existingIndicator.remove();
     }
 
-    // Create position wrapper if needed
     let wrapper = element.parentElement;
     if (!wrapper.classList.contains('grammar-buddy-wrapper')) {
       wrapper = document.createElement('div');
@@ -232,7 +381,6 @@
       wrapper.appendChild(element);
     }
 
-    // Create indicator
     const indicator = document.createElement('div');
     indicator.className = `grammar-buddy-indicator ${matches.length > 0 ? 'has-errors' : 'no-errors'}`;
     indicator.textContent = matches.length > 0 ? matches.length : '✓';
@@ -267,7 +415,7 @@
       const suggestion = match.replacements?.[0]?.value || '';
 
       html += `
-        <div style="margin-bottom: 10px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
+        <div class="grammar-buddy-match-item">
           <span class="grammar-buddy-tooltip-category ${match.category}">${match.category}</span>
           <div style="margin-top: 6px;">
             <span style="text-decoration: line-through; color: #999;">${escapeHtml(errorText)}</span>
@@ -281,14 +429,12 @@
 
     tooltip.innerHTML = html;
 
-    // Add click handlers for apply buttons
     tooltip.querySelectorAll('.grammar-buddy-suggestion').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const index = parseInt(btn.dataset.index);
         applyCorrection(element, matches[index]);
         hideTooltip();
-        // Re-check after correction
         setTimeout(() => {
           const newText = getTextContent(element);
           checkText(element, newText);
@@ -299,7 +445,6 @@
     document.body.appendChild(tooltip);
     activeTooltip = tooltip;
 
-    // Close on outside click
     setTimeout(() => {
       document.addEventListener('click', closeTooltipOnOutsideClick);
     }, 100);
@@ -339,14 +484,12 @@
       </div>
     `;
 
-    // Add click handlers
     tooltip.querySelectorAll('.grammar-buddy-suggestion').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const replacement = btn.dataset.replacement;
         applyReplacementInContentEditable(parentElement, match, replacement);
         hideTooltip();
-        // Re-check
         setTimeout(() => {
           const newText = getTextContent(parentElement);
           checkText(parentElement, newText);
@@ -359,14 +502,12 @@
     });
 
     tooltip.querySelector('.grammar-buddy-action-btn.ignore-all')?.addEventListener('click', () => {
-      // Add word to ignored list
       chrome.storage.sync.get(['ignoredWords'], (result) => {
         const ignoredWords = result.ignoredWords || [];
         ignoredWords.push(errorText.toLowerCase());
         chrome.storage.sync.set({ ignoredWords });
       });
       hideTooltip();
-      // Re-check
       setTimeout(() => {
         const newText = getTextContent(parentElement);
         checkText(parentElement, newText);
@@ -376,10 +517,8 @@
     document.body.appendChild(tooltip);
     activeTooltip = tooltip;
 
-    // Ensure tooltip is visible in viewport
     adjustTooltipPosition(tooltip);
 
-    // Close on outside click
     setTimeout(() => {
       document.addEventListener('click', closeTooltipOnOutsideClick);
     }, 100);
@@ -442,6 +581,7 @@
       element.innerText = text;
     }
     currentMatches.delete(element);
+    currentStats.delete(element);
   }
 
   function updateBadge(count) {
@@ -467,6 +607,7 @@
       wrapper.remove();
     });
     currentMatches.clear();
+    currentStats.clear();
   }
 
   function debounce(func, wait) {

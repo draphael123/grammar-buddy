@@ -2,6 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
   const enableToggle = document.getElementById('enableToggle');
+  const themeBtn = document.getElementById('themeBtn');
   const scoreValue = document.getElementById('scoreValue');
   const scoreProgress = document.getElementById('scoreProgress');
   const wordCount = document.getElementById('wordCount');
@@ -28,9 +29,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   svg.insertBefore(defs, svg.firstChild);
 
   // Load settings
-  const settings = await chrome.storage.sync.get(['enabled']);
+  const settings = await chrome.storage.sync.get(['enabled', 'theme']);
   enableToggle.checked = settings.enabled !== false;
   updateDisabledState();
+
+  // Apply theme
+  applyTheme(settings.theme || 'auto');
+
+  // Theme toggle
+  themeBtn.addEventListener('click', async () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const newTheme = current === 'dark' ? 'light' : 'dark';
+    applyTheme(newTheme);
+    await chrome.storage.sync.set({ theme: newTheme });
+
+    // Notify content script
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab?.id) {
+      chrome.tabs.sendMessage(tab.id, { type: 'SETTINGS_UPDATED', settings: { theme: newTheme } });
+    }
+  });
+
+  function applyTheme(theme) {
+    if (theme === 'auto') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+  }
 
   // Toggle enable/disable
   enableToggle.addEventListener('change', async () => {
@@ -169,22 +196,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   settingsBtn.addEventListener('click', () => {
     chrome.runtime.openOptionsPage();
   });
-
-  // Add loading spinner style
-  const style = document.createElement('style');
-  style.textContent = `
-    .loading-spinner {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-  `;
-  document.head.appendChild(style);
 });
