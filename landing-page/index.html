@@ -19,8 +19,8 @@
       <div class="nav-links">
         <a href="#features">Features</a>
         <a href="#demo">Try It</a>
-        <a href="#how-it-works">How It Works</a>
-        <a href="#install" class="btn btn-primary btn-sm">Install Free</a>
+        <a href="#faq">FAQ</a>
+        <a href="#install" class="btn btn-primary btn-sm">Download Free</a>
       </div>
     </div>
   </nav>
@@ -152,7 +152,7 @@
       </div>
       <div class="demo-container">
         <div class="demo-editor">
-          <textarea id="demoInput" placeholder="Start typing here to see grammar suggestions...">I recieved you're email and me will definately get back to you real soon. The meeting was postponed becuase of the whether outside.</textarea>
+          <div id="demoInput" class="demo-editable" contenteditable="true" data-placeholder="Start typing here to see grammar suggestions...">I recieved you're email and me will definately get back to you real soon. The meeting was postponed becuase of the whether outside.</div>
         </div>
         <div class="demo-results">
           <div class="results-header">
@@ -206,20 +206,114 @@
     </div>
   </section>
 
+  <!-- FAQ Section -->
+  <section id="faq" class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Frequently Asked Questions</h2>
+        <p>Everything you need to know about Grammar Buddy</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Does Grammar Buddy work on Slack, Google Docs, and other platforms?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <div class="faq-answer">
+            <p>Yes! Grammar Buddy works on virtually any website where you can type text, including:</p>
+            <ul>
+              <li><strong>Slack</strong> - Works in message boxes and threads</li>
+              <li><strong>Google Docs</strong> - Works in the document editor</li>
+              <li><strong>Gmail</strong> - Works in email composition</li>
+              <li><strong>LinkedIn</strong> - Works in posts and messages</li>
+              <li><strong>Twitter/X</strong> - Works in tweet composer</li>
+              <li><strong>Any website</strong> with text inputs or editable areas</li>
+            </ul>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Is Grammar Buddy really free?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <div class="faq-answer">
+            <p>Yes, Grammar Buddy is completely free to use. We use the LanguageTool API which offers generous free usage limits. There are no hidden fees, subscriptions, or premium tiers.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>How do I install Grammar Buddy?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <div class="faq-answer">
+            <p>Since Grammar Buddy isn't on the Chrome Web Store yet, you can install it manually:</p>
+            <ol>
+              <li>Click "Download Extension" to get the ZIP file</li>
+              <li>Extract the ZIP file to a folder on your computer</li>
+              <li>Open Chrome and go to <code>chrome://extensions</code></li>
+              <li>Enable "Developer mode" in the top right</li>
+              <li>Click "Load unpacked" and select the <code>extension</code> folder</li>
+            </ol>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>What languages are supported?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <div class="faq-answer">
+            <p>Grammar Buddy supports over 20 languages including English (US, UK, AU), German, French, Spanish, Portuguese, Dutch, Polish, Russian, and more. You can change the language in the extension settings.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Is my data private and secure?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <div class="faq-answer">
+            <p>Your privacy is important to us. Grammar Buddy only sends text to LanguageTool's servers for grammar checking - no text is stored or logged. The extension doesn't collect any personal information or track your browsing activity.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Does it work offline?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <div class="faq-answer">
+            <p>Grammar Buddy requires an internet connection to check your text using the LanguageTool API. However, your ignored words and settings are stored locally and will persist offline.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Install CTA -->
   <section id="install" class="install-section">
     <div class="container">
       <div class="install-card">
         <h2>Ready to Write Better?</h2>
         <p>Join thousands of writers who use Grammar Buddy to improve their writing every day.</p>
-        <a href="#" class="btn btn-primary btn-lg" id="installBtn">
+        <a href="https://github.com/draphael123/grammar-buddy/archive/refs/heads/main.zip" class="btn btn-primary btn-lg" id="installBtn">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          Add to Chrome - Free
+          Download Extension
         </a>
-        <p class="install-note">Works on Chrome, Edge, Brave, and other Chromium browsers</p>
+        <p class="install-note">Manual install required - see FAQ for instructions. Works on Chrome, Edge, Brave.</p>
       </div>
     </div>
   </section>

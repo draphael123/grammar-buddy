@@ -29,13 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
       pattern: /\bwether\b/gi,
       category: 'spelling',
       suggestion: 'weather',
-      message: 'Did you mean "weather" (climate) or "whether" (if)?'
+      message: 'Did you mean "weather" or "whether"?'
     },
     {
       pattern: /\byou're\s+(email|message|letter|document|file|report)/gi,
       category: 'grammar',
       suggestion: 'your $1',
-      message: 'Use "your" (possessive) instead of "you\'re" (you are)'
+      message: 'Use "your" (possessive) instead of "you\'re"'
     },
     {
       pattern: /\bme\s+will\b/gi,
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pattern: /\breal\s+soon\b/gi,
       category: 'style',
       suggestion: 'very soon',
-      message: 'Consider using "very" instead of "real" in formal writing'
+      message: 'Use "very" instead of "real" in formal writing'
     },
     {
       pattern: /\bget\s+back\s+to\s+you\b/gi,
@@ -77,11 +77,16 @@ document.addEventListener('DOMContentLoaded', () => {
       pattern: /\bwas\s+postponed\b/gi,
       category: 'tone',
       suggestion: 'has been postponed',
-      message: 'Consider using present perfect for recent events'
+      message: 'Consider present perfect for recent events'
     }
   ];
 
-  // Check text and display results
+  // Get plain text from contenteditable
+  function getPlainText() {
+    return demoInput.innerText || demoInput.textContent || '';
+  }
+
+  // Check text and return errors with positions
   function checkText(text) {
     const results = [];
 
@@ -93,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorText = match[0];
         let suggestion = error.suggestion;
 
-        // Handle capture groups in suggestion
         if (suggestion.includes('$1')) {
           suggestion = errorText.replace(error.pattern, error.suggestion);
         }
@@ -103,7 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
           suggestion: suggestion,
           category: error.category,
           message: error.message,
-          offset: match.index
+          offset: match.index,
+          length: errorText.length
         });
       }
     });
@@ -111,18 +116,57 @@ document.addEventListener('DOMContentLoaded', () => {
     return results;
   }
 
-  // Calculate score based on errors
+  // Highlight errors in text and return HTML
+  function highlightErrors(text, errors) {
+    if (errors.length === 0) {
+      return escapeHtml(text);
+    }
+
+    // Sort by offset ascending
+    const sortedErrors = [...errors].sort((a, b) => a.offset - b.offset);
+
+    let result = '';
+    let lastIndex = 0;
+
+    sortedErrors.forEach(error => {
+      // Add text before this error
+      if (error.offset > lastIndex) {
+        result += escapeHtml(text.substring(lastIndex, error.offset));
+      }
+
+      // Add the highlighted error
+      const errorText = text.substring(error.offset, error.offset + error.length);
+      const tooltip = `${capitalize(error.category)}: ${error.message}`;
+      result += `<span class="error ${error.category}" data-tooltip="${escapeAttr(tooltip)}" data-suggestion="${escapeAttr(error.suggestion)}">${escapeHtml(errorText)}</span>`;
+
+      lastIndex = error.offset + error.length;
+    });
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+      result += escapeHtml(text.substring(lastIndex));
+    }
+
+    return result;
+  }
+
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  // Calculate score
   function calculateScore(text, errors) {
     const wordCount = text.trim().split(/\s+/).filter(w => w.length > 0).length;
     if (wordCount === 0) return 100;
-
     const errorPenalty = Math.min(errors.length * 5, 50);
     return Math.max(100 - errorPenalty, 50);
   }
 
-  // Render results
-  function renderResults(results) {
-    if (results.length === 0) {
+  // Render results sidebar
+  function renderResults(errors) {
+    const sortedErrors = [...errors].sort((a, b) => a.offset - b.offset);
+
+    if (sortedErrors.length === 0) {
       resultsList.innerHTML = `
         <div class="result-item" style="border-left-color: var(--tone); text-align: center;">
           <span style="color: var(--tone);">No issues found!</span>
@@ -131,53 +175,115 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    resultsList.innerHTML = results.map(result => `
-      <div class="result-item ${result.category}">
+    resultsList.innerHTML = sortedErrors.map((error, index) => `
+      <div class="result-item ${error.category}" data-index="${index}">
         <div>
-          <span class="error-word">${escapeHtml(result.text)}</span>
+          <span class="error-word">${escapeHtml(error.text)}</span>
           <span> → </span>
-          <span class="suggestion">${escapeHtml(result.suggestion)}</span>
+          <span class="suggestion">${escapeHtml(error.suggestion)}</span>
         </div>
-        <div class="message">${escapeHtml(result.message)}</div>
+        <div class="message">${escapeHtml(error.message)}</div>
       </div>
     `).join('');
 
-    // Add click handlers to apply fixes
+    // Click handlers for sidebar items
     resultsList.querySelectorAll('.result-item').forEach((item, index) => {
       item.addEventListener('click', () => {
-        applyFix(results[index]);
+        applyFix(sortedErrors[index]);
       });
     });
   }
 
-  // Apply a fix to the textarea
-  function applyFix(result) {
-    const text = demoInput.value;
-    const regex = new RegExp(escapeRegex(result.text), 'gi');
-    demoInput.value = text.replace(regex, result.suggestion);
-    updateDemo();
+  // Apply a fix
+  function applyFix(error) {
+    const text = getPlainText();
+    const newText = text.substring(0, error.offset) + error.suggestion + text.substring(error.offset + error.length);
+    updateDemo(newText);
   }
 
-  // Escape regex special characters
-  function escapeRegex(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Save and restore cursor position
+  function saveCursor() {
+    const sel = window.getSelection();
+    if (sel.rangeCount > 0) {
+      const range = sel.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(demoInput);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      return preCaretRange.toString().length;
+    }
+    return 0;
   }
 
-  // Update demo
-  function updateDemo() {
-    const text = demoInput.value;
-    const results = checkText(text);
-    const score = calculateScore(text, results);
+  function restoreCursor(position) {
+    const sel = window.getSelection();
+    const range = document.createRange();
 
+    let charCount = 0;
+    let foundStart = false;
+
+    function traverseNodes(node) {
+      if (foundStart) return;
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        const nextCharCount = charCount + node.length;
+        if (!foundStart && position <= nextCharCount) {
+          range.setStart(node, position - charCount);
+          range.collapse(true);
+          foundStart = true;
+        }
+        charCount = nextCharCount;
+      } else {
+        for (let i = 0; i < node.childNodes.length; i++) {
+          traverseNodes(node.childNodes[i]);
+          if (foundStart) break;
+        }
+      }
+    }
+
+    traverseNodes(demoInput);
+
+    if (foundStart) {
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  }
+
+  // Main update function
+  function updateDemo(newText) {
+    const cursorPos = saveCursor();
+    const text = newText !== undefined ? newText : getPlainText();
+    const errors = checkText(text);
+    const score = calculateScore(text, errors);
+
+    // Update highlighted content
+    demoInput.innerHTML = highlightErrors(text, errors);
+
+    // Restore cursor if we're editing
+    if (newText === undefined) {
+      restoreCursor(cursorPos);
+    }
+
+    // Add click handlers to inline error spans
+    demoInput.querySelectorAll('.error').forEach(span => {
+      span.addEventListener('click', (e) => {
+        e.preventDefault();
+        const suggestion = span.dataset.suggestion;
+        const errorText = span.textContent;
+        const currentText = getPlainText();
+        const newText = currentText.replace(errorText, suggestion);
+        updateDemo(newText);
+      });
+    });
+
+    // Update score
     demoScore.textContent = score;
-    renderResults(results);
-
-    // Update score badge color
     demoScore.style.background = score >= 90
       ? 'linear-gradient(135deg, #27ae60, #1e8449)'
       : score >= 70
         ? 'linear-gradient(135deg, #667eea, #764ba2)'
         : 'linear-gradient(135deg, #e74c3c, #c0392b)';
+
+    renderResults(errors);
   }
 
   // Escape HTML
@@ -187,71 +293,55 @@ document.addEventListener('DOMContentLoaded', () => {
     return div.innerHTML;
   }
 
-  // Debounce function
+  // Escape for attributes
+  function escapeAttr(text) {
+    return text.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // Debounce
   function debounce(func, wait) {
     let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
+    return function(...args) {
       clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
+      timeout = setTimeout(() => func(...args), wait);
     };
   }
 
   // Event listeners
-  demoInput.addEventListener('input', debounce(updateDemo, 300));
+  demoInput.addEventListener('input', debounce(() => updateDemo(), 400));
 
-  // Initial check
+  // Initial highlight
   updateDemo();
 
-  // Smooth scroll for anchor links
+  // Smooth scroll
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
       e.preventDefault();
       const target = document.querySelector(this.getAttribute('href'));
       if (target) {
-        target.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     });
   });
 
-  // Install button click
+  // Download button - direct download from GitHub
   const installBtn = document.getElementById('installBtn');
   if (installBtn) {
     installBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      // In production, this would link to the Chrome Web Store
-      alert('In production, this button will link to the Chrome Web Store to install Grammar Buddy!');
+      window.location.href = 'https://github.com/draphael123/grammar-buddy/archive/refs/heads/main.zip';
     });
   }
 
   // Navbar scroll effect
   const navbar = document.querySelector('.navbar');
-  let lastScroll = 0;
-
   window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-
-    if (currentScroll > 100) {
-      navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-    } else {
-      navbar.style.boxShadow = 'none';
-    }
-
-    lastScroll = currentScroll;
+    navbar.style.boxShadow = window.pageYOffset > 100
+      ? '0 2px 20px rgba(0, 0, 0, 0.1)'
+      : 'none';
   });
 
-  // Animate elements on scroll
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
-
+  // Scroll animations
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -259,13 +349,22 @@ document.addEventListener('DOMContentLoaded', () => {
         entry.target.style.transform = 'translateY(0)';
       }
     });
-  }, observerOptions);
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-  // Observe feature cards and steps
-  document.querySelectorAll('.feature-card, .step').forEach(el => {
+  document.querySelectorAll('.feature-card, .step, .faq-item').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
     observer.observe(el);
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', () => {
+      const item = question.parentElement;
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    });
   });
 });
