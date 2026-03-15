@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grammar Buddy</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="popup-header">
+      <div class="logo">
+        <span class="logo-icon">GB</span>
+        <span class="logo-text">Grammar Buddy</span>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="enableToggle" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </header>
+
+    <!-- Score Section -->
+    <div class="score-section">
+      <div class="score-circle" id="scoreCircle">
+        <svg viewBox="0 0 100 100">
+          <circle class="score-bg" cx="50" cy="50" r="45"/>
+          <circle class="score-progress" cx="50" cy="50" r="45" id="scoreProgress"/>
+        </svg>
+        <div class="score-value" id="scoreValue">--</div>
+      </div>
+      <div class="score-label">Writing Score</div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="wordCount">0</div>
+        <div class="stat-label">Words</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="readingTime">0m</div>
+        <div class="stat-label">Read Time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="gradeLevel">--</div>
+        <div class="stat-label">Grade Level</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="readingEase">--</div>
+        <div class="stat-label">Readability</div>
+      </div>
+    </div>
+
+    <!-- Issues Section -->
+    <div class="issues-section">
+      <h3 class="section-title">Issues Found</h3>
+      <div class="issues-list">
+        <div class="issue-row">
+          <span class="issue-dot spelling"></span>
+          <span class="issue-label">Spelling</span>
+          <span class="issue-count" id="spellingCount">0</span>
+        </div>
+        <div class="issue-row">
+          <span class="issue-dot grammar"></span>
+          <span class="issue-label">Grammar</span>
+          <span class="issue-count" id="grammarCount">0</span>
+        </div>
+        <div class="issue-row">
+          <span class="issue-dot style"></span>
+          <span class="issue-label">Style</span>
+          <span class="issue-count" id="styleCount">0</span>
+        </div>
+        <div class="issue-row">
+          <span class="issue-dot tone"></span>
+          <span class="issue-label">Tone</span>
+          <span class="issue-count" id="toneCount">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+      <button class="action-btn" id="checkNowBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        Check Now
+      </button>
+      <button class="action-btn secondary" id="settingsBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        Settings
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="popup-footer">
+      <span>Powered by LanguageTool</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

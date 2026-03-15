@@ -1,0 +1,304 @@
+/* Grammar Buddy Content Script Styles */
+
+/* Error underlines */
+.grammar-buddy-error {
+  position: relative;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='3'%3E%3Cpath d='M0 2.5 L1 1 L2 2.5 L3 1 L4 2.5' stroke='%23e74c3c' fill='none' stroke-width='1'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom;
+  background-size: 4px 3px;
+  cursor: pointer;
+}
+
+.grammar-buddy-error.spelling {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='3'%3E%3Cpath d='M0 2.5 L1 1 L2 2.5 L3 1 L4 2.5' stroke='%23e74c3c' fill='none' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+.grammar-buddy-error.grammar {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='3'%3E%3Cpath d='M0 2.5 L1 1 L2 2.5 L3 1 L4 2.5' stroke='%233498db' fill='none' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+.grammar-buddy-error.style {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='3'%3E%3Cpath d='M0 2.5 L1 1 L2 2.5 L3 1 L4 2.5' stroke='%239b59b6' fill='none' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+.grammar-buddy-error.tone {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='3'%3E%3Cpath d='M0 2.5 L1 1 L2 2.5 L3 1 L4 2.5' stroke='%2327ae60' fill='none' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* Tooltip container */
+.grammar-buddy-tooltip {
+  position: absolute;
+  z-index: 2147483647;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 12px 16px;
+  max-width: 350px;
+  min-width: 200px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  animation: grammarBuddyFadeIn 0.2s ease-out;
+  border: 1px solid #e0e0e0;
+}
+
+.grammar-buddy-tooltip.dark {
+  background: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+@keyframes grammarBuddyFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tooltip header */
+.grammar-buddy-tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.grammar-buddy-tooltip.dark .grammar-buddy-tooltip-header {
+  border-bottom-color: #444;
+}
+
+.grammar-buddy-tooltip-category {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.grammar-buddy-tooltip-category.spelling {
+  background: #fde8e8;
+  color: #e74c3c;
+}
+
+.grammar-buddy-tooltip-category.grammar {
+  background: #e8f4fd;
+  color: #3498db;
+}
+
+.grammar-buddy-tooltip-category.style {
+  background: #f3e8fd;
+  color: #9b59b6;
+}
+
+.grammar-buddy-tooltip-category.tone {
+  background: #e8fdf0;
+  color: #27ae60;
+}
+
+/* Tooltip message */
+.grammar-buddy-tooltip-message {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.grammar-buddy-tooltip.dark .grammar-buddy-tooltip-message {
+  color: #bbb;
+}
+
+/* Original text */
+.grammar-buddy-tooltip-original {
+  background: #fff3f3;
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  text-decoration: line-through;
+  color: #999;
+}
+
+.grammar-buddy-tooltip.dark .grammar-buddy-tooltip-original {
+  background: #3d2d2d;
+}
+
+/* Suggestions */
+.grammar-buddy-tooltip-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.grammar-buddy-suggestion {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #f0f7ff;
+  border: 1px solid #3498db;
+  border-radius: 4px;
+  color: #3498db;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.grammar-buddy-suggestion:hover {
+  background: #3498db;
+  color: #fff;
+}
+
+.grammar-buddy-tooltip.dark .grammar-buddy-suggestion {
+  background: #1e3a5f;
+  border-color: #5dade2;
+  color: #5dade2;
+}
+
+.grammar-buddy-tooltip.dark .grammar-buddy-suggestion:hover {
+  background: #5dade2;
+  color: #1e3a5f;
+}
+
+/* Tooltip actions */
+.grammar-buddy-tooltip-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.grammar-buddy-tooltip.dark .grammar-buddy-tooltip-actions {
+  border-top-color: #444;
+}
+
+.grammar-buddy-action-btn {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.grammar-buddy-action-btn.ignore {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.grammar-buddy-action-btn.ignore:hover {
+  background: #e0e0e0;
+}
+
+.grammar-buddy-action-btn.ignore-all {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.grammar-buddy-action-btn.ignore-all:hover {
+  background: #ffe0b2;
+}
+
+/* Highlight overlay for textareas */
+.grammar-buddy-overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Indicator badge on inputs */
+.grammar-buddy-indicator {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  z-index: 1000;
+}
+
+.grammar-buddy-indicator:hover {
+  transform: scale(1.1);
+}
+
+.grammar-buddy-indicator.has-errors {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.grammar-buddy-indicator.no-errors {
+  background: linear-gradient(135deg, #27ae60, #1e8449);
+}
+
+/* Loading spinner */
+.grammar-buddy-loading {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: grammarBuddySpin 0.8s linear infinite;
+}
+
+@keyframes grammarBuddySpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Score widget */
+.grammar-buddy-score-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 12px 16px;
+  z-index: 2147483646;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-width: 120px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.grammar-buddy-score-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.grammar-buddy-score-widget.dark {
+  background: #2d2d2d;
+  color: #e0e0e0;
+}
+
+.grammar-buddy-score-number {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.grammar-buddy-score-label {
+  font-size: 11px;
+  text-align: center;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate Extension Icons</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; background: #f5f5f5; }
+    h1 { margin-bottom: 20px; }
+    .icon-container { display: flex; gap: 40px; margin-bottom: 40px; }
+    .icon-box { text-align: center; }
+    canvas { display: block; margin-bottom: 10px; border: 1px solid #ddd; }
+    button { padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; margin: 5px; }
+    button:hover { background: #5a6fd6; }
+    .instructions { background: white; padding: 20px; border-radius: 8px; margin-top: 20px; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Grammar Buddy Icon Generator</h1>
+  <p>Click the buttons below to download PNG icons for the extension.</p>
+
+  <div class="icon-container">
+    <div class="icon-box">
+      <canvas id="icon16" width="16" height="16"></canvas>
+      <button onclick="download('icon16', 16)">Download 16x16</button>
+    </div>
+    <div class="icon-box">
+      <canvas id="icon48" width="48" height="48"></canvas>
+      <button onclick="download('icon48', 48)">Download 48x48</button>
+    </div>
+    <div class="icon-box">
+      <canvas id="icon128" width="128" height="128"></canvas>
+      <button onclick="download('icon128', 128)">Download 128x128</button>
+    </div>
+  </div>
+
+  <button onclick="downloadAll()">Download All Icons</button>
+
+  <div class="instructions">
+    <h3>Instructions:</h3>
+    <ol>
+      <li>Click "Download All Icons" or download each size individually</li>
+      <li>Save the PNG files to the <code>extension/icons/</code> folder</li>
+      <li>Make sure they are named: <code>icon16.png</code>, <code>icon48.png</code>, <code>icon128.png</code></li>
+    </ol>
+  </div>
+
+  <script>
+    function drawIcon(canvas, size) {
+      const ctx = canvas.getContext('2d');
+      const radius = size * 0.2;
+
+      // Create gradient
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#667eea');
+      gradient.addColorStop(1, '#764ba2');
+
+      // Draw rounded rectangle
+      ctx.beginPath();
+      ctx.moveTo(radius, 0);
+      ctx.lineTo(size - radius, 0);
+      ctx.quadraticCurveTo(size, 0, size, radius);
+      ctx.lineTo(size, size - radius);
+      ctx.quadraticCurveTo(size, size, size - radius, size);
+      ctx.lineTo(radius, size);
+      ctx.quadraticCurveTo(0, size, 0, size - radius);
+      ctx.lineTo(0, radius);
+      ctx.quadraticCurveTo(0, 0, radius, 0);
+      ctx.closePath();
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      // Draw text
+      ctx.fillStyle = 'white';
+      ctx.font = `bold ${size * 0.375}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('GB', size / 2, size / 2 + size * 0.05);
+    }
+
+    function download(canvasId, size) {
+      const canvas = document.getElementById(canvasId);
+      const link = document.createElement('a');
+      link.download = `icon${size}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function downloadAll() {
+      download('icon16', 16);
+      setTimeout(() => download('icon48', 48), 100);
+      setTimeout(() => download('icon128', 128), 200);
+    }
+
+    // Draw all icons on load
+    drawIcon(document.getElementById('icon16'), 16);
+    drawIcon(document.getElementById('icon48'), 48);
+    drawIcon(document.getElementById('icon128'), 128);
+  </script>
+</body>
+</html>
